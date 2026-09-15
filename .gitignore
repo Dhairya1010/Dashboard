@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+*.local
+*.log
+.DS_Store
+.wrangler
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+worker/wrangler.production.jsonc
+coverage

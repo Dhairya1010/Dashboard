@@ -1,0 +1,8 @@
+# Local development only. Never upload this file as production configuration.
+ENVIRONMENT=local
+AUTH_MODE=local
+APP_ORIGIN=http://127.0.0.1:5173
+OWNER_EMAIL=developer@localhost
+LOCAL_BOOTSTRAP_EMAIL=developer@localhost
+LOCAL_BOOTSTRAP_PASSWORD=replace-with-a-long-local-password
+LOCAL_BOOTSTRAP_ROLE=owner

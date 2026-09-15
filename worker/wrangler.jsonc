@@ -1,0 +1,30 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "personal-dashboard-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "../dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "dev": { "ip": "127.0.0.1", "port": 8787 },
+  "vars": {
+    "ENVIRONMENT": "local",
+    "AUTH_MODE": "local",
+    "APP_ORIGIN": "http://127.0.0.1:5173",
+    "ACCESS_ISSUER": "",
+    "ACCESS_AUD": "",
+    "OWNER_EMAIL": "developer@localhost",
+    "LOCAL_BOOTSTRAP_EMAIL": "developer@localhost",
+    "LOCAL_BOOTSTRAP_ROLE": "owner"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "personal-dashboard",
+    "database_id": "00000000-0000-0000-0000-000000000000",
+    "migrations_dir": "migrations"
+  }]
+}
