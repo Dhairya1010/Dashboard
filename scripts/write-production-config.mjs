@@ -27,7 +27,10 @@ const config = {
     OWNER_EMAIL: process.env.OWNER_EMAIL,
     LOCAL_BOOTSTRAP_EMAIL: process.env.OWNER_EMAIL,
     LOCAL_BOOTSTRAP_ROLE: "admin",
+    VAPID_SUBJECT: `mailto:${process.env.OWNER_EMAIL}`,
+    VAPID_PUBLIC_KEY: "BH_cmkYZUPEG1yaHlH9J5QzN36aKN-sEWqNKhnWVUFike_hw9Guynel4HXtKh28kLLzRgpHRTGEAg_3dBWt14qE",
   },
+  triggers: { crons: ["* * * * *"] },
   d1_databases: [{
     binding: "DB",
     database_name: "personal-dashboard",

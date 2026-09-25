@@ -18,8 +18,11 @@
     "ACCESS_AUD": "",
     "OWNER_EMAIL": "owner@example.com",
     "LOCAL_BOOTSTRAP_EMAIL": "owner@example.com",
-    "LOCAL_BOOTSTRAP_ROLE": "admin"
+    "LOCAL_BOOTSTRAP_ROLE": "admin",
+    "VAPID_SUBJECT": "mailto:owner@example.com",
+    "VAPID_PUBLIC_KEY": "replace-with-public-vapid-key"
   },
+  "triggers": { "crons": ["* * * * *"] },
   "d1_databases": [{
     "binding": "DB",
     "database_name": "personal-dashboard",

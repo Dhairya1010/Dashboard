@@ -1,0 +1,9 @@
+{
+  "name": "Personal Productivity Dashboard",
+  "short_name": "Dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f8fa",
+  "theme_color": "#4058c7",
+  "icons": [{ "src": "/dashboard-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

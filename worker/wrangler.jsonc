@@ -19,8 +19,11 @@
     "ACCESS_AUD": "",
     "OWNER_EMAIL": "developer@localhost",
     "LOCAL_BOOTSTRAP_EMAIL": "developer@localhost",
-    "LOCAL_BOOTSTRAP_ROLE": "owner"
+    "LOCAL_BOOTSTRAP_ROLE": "owner",
+    "VAPID_SUBJECT": "mailto:developer@localhost",
+    "VAPID_PUBLIC_KEY": "BKAE6RKAVbT1skPT92JMO5Fyx6MdD6rNBVRvs5pUbns7hv4GwdzYJANWXnxu60q3ZJ4QS1O93O0RLURiv5nCCF0"
   },
+  "triggers": { "crons": ["* * * * *"] },
   "d1_databases": [{
     "binding": "DB",
     "database_name": "personal-dashboard",

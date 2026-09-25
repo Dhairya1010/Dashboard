@@ -8,6 +8,7 @@ import { RemindersPage } from "@/components/reminders-page"
 import { SchedulePage } from "@/components/schedule-page"
 import { OverviewPage } from "@/components/overview-page"
 import { SettingsPage } from "@/components/settings-page"
+import { NotificationsPage } from "@/components/notifications-page"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
@@ -90,7 +91,7 @@ function Workspace({ session }: { session: Session }) {
           <h1 className="text-3xl font-semibold tracking-[-0.03em] md:text-4xl">{page.id === "overview" ? `${greeting}, Dhairya.` : page.label}</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{page.description}</p>
         </div>
-        {page.id === "tasks" ? <TasksPage readOnly={session.user.role === "viewer"} /> : page.id === "notes" ? <NotesPage readOnly={session.user.role === "viewer"} /> : page.id === "reminders" ? <RemindersPage readOnly={session.user.role === "viewer"} /> : page.id === "schedule" ? <SchedulePage /> : page.id === "overview" ? <OverviewPage /> : page.id === "settings" ? <SettingsPage session={session} /> : <Card><CardContent className="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center"><div className="mb-5 rounded-xl bg-accent p-4"><PageIcon className="size-6 text-primary" /></div><CardTitle>{page.label} is coming soon</CardTitle><p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">This space is ready for the next stage of your dashboard.</p><Button asChild variant="outline" className="mt-6"><a href="#overview">Back to overview</a></Button></CardContent></Card>}
+        {page.id === "tasks" ? <TasksPage readOnly={session.user.role === "viewer"} /> : page.id === "notes" ? <NotesPage readOnly={session.user.role === "viewer"} /> : page.id === "reminders" ? <RemindersPage readOnly={session.user.role === "viewer"} /> : page.id === "schedule" ? <SchedulePage /> : page.id === "overview" ? <OverviewPage /> : page.id === "settings" ? <SettingsPage session={session} /> : page.id === "notifications" ? <NotificationsPage /> : <Card><CardContent className="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center"><div className="mb-5 rounded-xl bg-accent p-4"><PageIcon className="size-6 text-primary" /></div><CardTitle>{page.label} is coming soon</CardTitle><p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">This space is ready for the next stage of your dashboard.</p><Button asChild variant="outline" className="mt-6"><a href="#overview">Back to overview</a></Button></CardContent></Card>}
       </div>
       <footer className="px-4 pb-5 text-xs text-muted-foreground sm:px-6 md:px-8">Your space. Your pace.</footer>
     </SidebarInset>

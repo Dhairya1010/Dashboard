@@ -7,6 +7,7 @@ import { handleNotes } from "./notes"
 import { handleReminders } from "./reminders"
 import { handleSchedule } from "./schedule"
 import { handleSettings } from "./settings"
+import { handleNotifications, processDueReminders } from "./notifications"
 
 interface UserRecord {
   id: string
@@ -57,7 +58,7 @@ async function route(request: Request, env: Env): Promise<Response> {
   }
   if (!pathname.startsWith("/api/")) throw new HttpError(404, "NOT_FOUND", "Route not found.")
   const identity = await authenticate(request, env)
-  if (!pathname.startsWith("/api/todos") && !pathname.startsWith("/api/notes") && !pathname.startsWith("/api/reminders") && !pathname.startsWith("/api/settings") && request.method !== "GET") {
+  if (!pathname.startsWith("/api/todos") && !pathname.startsWith("/api/notes") && !pathname.startsWith("/api/reminders") && !pathname.startsWith("/api/settings") && !pathname.startsWith("/api/notifications") && !pathname.startsWith("/api/push") && request.method !== "GET") {
     return new Response(JSON.stringify({ error: { code: "METHOD_NOT_ALLOWED", message: "Method not allowed." } }), {
       status: 405, headers: { "Allow": "GET", "Content-Type": "application/json" },
     })
@@ -82,10 +83,15 @@ async function route(request: Request, env: Env): Promise<Response> {
   if (scheduleResponse) return scheduleResponse
   const settingsResponse = await handleSettings(request, env, user, pathname)
   if (settingsResponse) return settingsResponse
+  const notificationResponse = await handleNotifications(request, env, user, pathname)
+  if (notificationResponse) return notificationResponse
   throw new HttpError(404, "NOT_FOUND", "Route not found.")
 }
 
 export default {
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext) {
+    ctx.waitUntil(processDueReminders(env))
+  },
   async fetch(request: Request, env: Env): Promise<Response> {
     const requestId = crypto.randomUUID()
     const origin = request.headers.get("Origin")

@@ -8,14 +8,15 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:api": "wrangler dev --config worker/wrangler.jsonc --local",
+    "dev:api": "wrangler dev --config worker/wrangler.jsonc --local --test-scheduled",
     "db:migrate:local": "wrangler d1 migrations apply DB --local --config worker/wrangler.jsonc",
     "typecheck:api": "tsc -p worker/tsconfig.json",
     "test": "vitest run",
-    "build:api": "wrangler deploy --dry-run --config worker/wrangler.jsonc --outdir dist/worker"
-    ,"deploy:production": "npm run build && wrangler deploy --config worker/wrangler.production.jsonc"
+    "build:api": "wrangler deploy --dry-run --config worker/wrangler.jsonc --outdir dist/worker",
+    "deploy:production": "npm run build && wrangler deploy --config worker/wrangler.production.jsonc"
   },
   "dependencies": {
+    "@block65/webcrypto-web-push": "^2.0.0",
     "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-separator": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
