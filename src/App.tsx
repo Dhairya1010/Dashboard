@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react"
-import { Bell, CalendarDays, ChartNoAxesCombined, CheckSquare2, ChevronRight, ExternalLink, LayoutDashboard, LogOut, NotebookPen, Settings, Timer } from "lucide-react"
+import { Bell, CalendarDays, ChartNoAxesCombined, CheckSquare2, ExternalLink, LayoutDashboard, LogOut, NotebookPen, Settings, Timer } from "lucide-react"
 
 import { AuthGate } from "@/components/auth-gate"
 import { TasksPage } from "@/components/tasks-page"
 import { NotesPage } from "@/components/notes-page"
 import { RemindersPage } from "@/components/reminders-page"
+import { SchedulePage } from "@/components/schedule-page"
+import { OverviewPage } from "@/components/overview-page"
+import { SettingsPage } from "@/components/settings-page"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { accessLogoutUrl, passwordSignOut, type Session } from "@/lib/api"
 
@@ -87,11 +90,7 @@ function Workspace({ session }: { session: Session }) {
           <h1 className="text-3xl font-semibold tracking-[-0.03em] md:text-4xl">{page.id === "overview" ? `${greeting}, Dhairya.` : page.label}</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{page.description}</p>
         </div>
-        {page.id === "tasks" ? <TasksPage readOnly={session.user.role === "viewer"} /> : page.id === "notes" ? <NotesPage readOnly={session.user.role === "viewer"} /> : page.id === "reminders" ? <RemindersPage readOnly={session.user.role === "viewer"} /> : page.id === "overview" ? <div className="grid min-w-0 gap-5 lg:grid-cols-3">
-          <Card className="min-w-0 lg:col-span-2"><CardHeader><div><CardTitle>Today</CardTitle><p className="mt-1 text-sm text-muted-foreground">A fresh start for your next priority.</p></div></CardHeader><CardContent><div className="flex min-h-56 flex-col items-center justify-center rounded-lg border border-dashed bg-muted/30 p-5 text-center"><CheckSquare2 className="mb-4 size-6 text-muted-foreground" /><p className="text-sm font-medium">Your day starts here</p><p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">Task management is coming soon. This will be your space to plan and focus.</p><Button asChild variant="outline" className="mt-5"><a href="#tasks">Explore tasks<ChevronRight className="size-4" /></a></Button></div></CardContent></Card>
-          <Card className="min-w-0"><CardHeader><CardTitle>Upcoming</CardTitle><Button asChild variant="ghost" size="icon"><a href="#schedule" aria-label="View schedule"><ChevronRight className="size-4" /></a></Button></CardHeader><CardContent><div className="flex min-h-56 flex-col items-center justify-center px-2 text-center"><CalendarDays className="mb-4 size-6 text-muted-foreground" /><p className="text-sm font-medium">Space for what’s next</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Your upcoming tasks and reminders will appear here.</p></div></CardContent></Card>
-          <Card className="min-w-0 lg:col-span-3"><CardHeader><CardTitle>Your workspace</CardTitle></CardHeader><CardContent><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{navigation.slice(1, 5).map(({ id, label, icon: Icon }) => <a key={id} href={`#${id}`} className="flex min-h-16 items-center gap-3 rounded-lg border p-4 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring"><Icon className="size-5 text-primary" />{label}<ChevronRight className="ml-auto size-4 text-muted-foreground" /></a>)}</div></CardContent></Card>
-        </div> : <Card><CardContent className="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center"><div className="mb-5 rounded-xl bg-accent p-4"><PageIcon className="size-6 text-primary" /></div><CardTitle>{page.label} is coming soon</CardTitle><p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">This space is ready for the next stage of your dashboard.</p><Button asChild variant="outline" className="mt-6"><a href="#overview">Back to overview</a></Button></CardContent></Card>}
+        {page.id === "tasks" ? <TasksPage readOnly={session.user.role === "viewer"} /> : page.id === "notes" ? <NotesPage readOnly={session.user.role === "viewer"} /> : page.id === "reminders" ? <RemindersPage readOnly={session.user.role === "viewer"} /> : page.id === "schedule" ? <SchedulePage /> : page.id === "overview" ? <OverviewPage /> : page.id === "settings" ? <SettingsPage session={session} /> : <Card><CardContent className="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center"><div className="mb-5 rounded-xl bg-accent p-4"><PageIcon className="size-6 text-primary" /></div><CardTitle>{page.label} is coming soon</CardTitle><p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">This space is ready for the next stage of your dashboard.</p><Button asChild variant="outline" className="mt-6"><a href="#overview">Back to overview</a></Button></CardContent></Card>}
       </div>
       <footer className="px-4 pb-5 text-xs text-muted-foreground sm:px-6 md:px-8">Your space. Your pace.</footer>
     </SidebarInset>

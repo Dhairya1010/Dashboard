@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ApiError } from "@/lib/api"
 import { createTodo, deleteTodo, getTodos, updateTodo, type Todo, type TodoInput } from "@/lib/todo-api"
+import { getSettings } from "@/lib/settings-api"
 
 type Filter = "open" | "completed" | "all"
 const fieldClass = "h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -30,6 +31,8 @@ export function TasksPage({ readOnly }: { readOnly: boolean }) {
   const [search, setSearch] = useState("")
   const [error, setError] = useState("")
   const [draft, setDraft] = useState<TodoInput>({ title: "", description: "", priority: "medium", dueAt: null })
+
+  useEffect(() => { const controller = new AbortController(); getSettings(controller.signal).then((value) => setDraft((current) => ({ ...current, priority: value.defaultTaskPriority }))).catch(() => {}); return () => controller.abort() }, [])
 
   useEffect(() => {
     const controller = new AbortController()

@@ -5,6 +5,8 @@ import { isPasswordAuthRequest, signInLocal, signOutLocal } from "./local-auth"
 import { handleTodos } from "./todos"
 import { handleNotes } from "./notes"
 import { handleReminders } from "./reminders"
+import { handleSchedule } from "./schedule"
+import { handleSettings } from "./settings"
 
 interface UserRecord {
   id: string
@@ -55,7 +57,7 @@ async function route(request: Request, env: Env): Promise<Response> {
   }
   if (!pathname.startsWith("/api/")) throw new HttpError(404, "NOT_FOUND", "Route not found.")
   const identity = await authenticate(request, env)
-  if (!pathname.startsWith("/api/todos") && !pathname.startsWith("/api/notes") && !pathname.startsWith("/api/reminders") && request.method !== "GET") {
+  if (!pathname.startsWith("/api/todos") && !pathname.startsWith("/api/notes") && !pathname.startsWith("/api/reminders") && !pathname.startsWith("/api/settings") && request.method !== "GET") {
     return new Response(JSON.stringify({ error: { code: "METHOD_NOT_ALLOWED", message: "Method not allowed." } }), {
       status: 405, headers: { "Allow": "GET", "Content-Type": "application/json" },
     })
@@ -76,6 +78,10 @@ async function route(request: Request, env: Env): Promise<Response> {
   if (noteResponse) return noteResponse
   const reminderResponse = await handleReminders(request, env, user, pathname)
   if (reminderResponse) return reminderResponse
+  const scheduleResponse = await handleSchedule(request, env, user.id, pathname)
+  if (scheduleResponse) return scheduleResponse
+  const settingsResponse = await handleSettings(request, env, user, pathname)
+  if (settingsResponse) return settingsResponse
   throw new HttpError(404, "NOT_FOUND", "Route not found.")
 }
 

@@ -4,22 +4,25 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ApiError } from "@/lib/api"
 import { createReminder, deleteReminder, getReminders, updateReminder, type Reminder, type ReminderInput } from "@/lib/reminder-api"
+import { getSettings } from "@/lib/settings-api"
 
 type Filter = "pending" | "cancelled" | "all"
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Australia/Brisbane"
-const empty = (): ReminderInput => ({ title: "", dueAt: Math.floor(Date.now() / 1000) + 3600, timezone, recurrence: "none" })
+const empty = (preferredTimezone = timezone): ReminderInput => ({ title: "", dueAt: Math.floor(Date.now() / 1000) + 3600, timezone: preferredTimezone, recurrence: "none" })
 const fieldClass = "h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
 function inputDate(seconds: number) { const date = new Date(seconds * 1000); const offset = date.getTimezoneOffset() * 60_000; return new Date(date.getTime() - offset).toISOString().slice(0, 16) }
 
 export function RemindersPage({ readOnly }: { readOnly: boolean }) {
   const [items, setItems] = useState<Reminder[]>([]), [loading, setLoading] = useState(true), [saving, setSaving] = useState(false)
   const [showForm, setShowForm] = useState(false), [editingId, setEditingId] = useState<string | null>(null), [draft, setDraft] = useState<ReminderInput>(empty)
+  const [preferredTimezone, setPreferredTimezone] = useState(timezone)
   const [filter, setFilter] = useState<Filter>("pending"), [search, setSearch] = useState(""), [error, setError] = useState("")
+  useEffect(() => { const controller = new AbortController(); getSettings(controller.signal).then((value) => { setPreferredTimezone(value.timezone); setDraft((current) => ({ ...current, timezone: value.timezone })) }).catch(() => {}); return () => controller.abort() }, [])
   useEffect(() => { const controller = new AbortController(); getReminders(controller.signal).then(setItems).catch((reason) => { if (!controller.signal.aborted) setError(reason instanceof ApiError ? reason.message : "Reminders could not be loaded.") }).finally(() => { if (!controller.signal.aborted) setLoading(false) }); return () => controller.abort() }, [])
   const visible = useMemo(() => items.filter((item) => (filter === "all" || item.status === filter) && item.title.toLowerCase().includes(search.trim().toLowerCase())), [items, filter, search])
-  function openNew() { setEditingId(null); setDraft(empty()); setShowForm(true); setError("") }
+  function openNew() { setEditingId(null); setDraft(empty(preferredTimezone)); setShowForm(true); setError("") }
   function openEdit(item: Reminder) { setEditingId(item.id); setDraft({ title: item.title, dueAt: item.dueAt, timezone: item.timezone, recurrence: item.recurrence }); setShowForm(true); setError("") }
-  function close() { setShowForm(false); setEditingId(null); setDraft(empty()) }
+  function close() { setShowForm(false); setEditingId(null); setDraft(empty(preferredTimezone)) }
   async function save(event: FormEvent) { event.preventDefault(); setSaving(true); setError(""); try { if (editingId) { const updated = await updateReminder(editingId, draft); setItems((current) => current.map((item) => item.id === editingId ? updated : item).sort((a, b) => a.dueAt - b.dueAt)) } else { const created = await createReminder(draft); setItems((current) => [...current, created].sort((a, b) => a.dueAt - b.dueAt)) } close() } catch (reason) { setError(reason instanceof ApiError ? reason.message : "The reminder could not be saved.") } finally { setSaving(false) } }
   async function setStatus(item: Reminder) { setError(""); try { const updated = await updateReminder(item.id, { status: item.status === "cancelled" ? "pending" : "cancelled" }); setItems((current) => current.map((value) => value.id === item.id ? updated : value)) } catch (reason) { setError(reason instanceof ApiError ? reason.message : "The reminder could not be updated.") } }
   async function remove(item: Reminder) { if (!window.confirm(`Delete “${item.title}”?`)) return; setError(""); try { await deleteReminder(item.id); setItems((current) => current.filter((value) => value.id !== item.id)) } catch (reason) { setError(reason instanceof ApiError ? reason.message : "The reminder could not be deleted.") } }
