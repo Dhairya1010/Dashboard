@@ -2,6 +2,9 @@ import { authenticate } from "./auth"
 import type { Env } from "./env"
 import { HttpError, json } from "./http"
 import { isPasswordAuthRequest, signInLocal, signOutLocal } from "./local-auth"
+import { handleTodos } from "./todos"
+import { handleNotes } from "./notes"
+import { handleReminders } from "./reminders"
 
 interface UserRecord {
   id: string
@@ -52,7 +55,7 @@ async function route(request: Request, env: Env): Promise<Response> {
   }
   if (!pathname.startsWith("/api/")) throw new HttpError(404, "NOT_FOUND", "Route not found.")
   const identity = await authenticate(request, env)
-  if (request.method !== "GET") {
+  if (!pathname.startsWith("/api/todos") && !pathname.startsWith("/api/notes") && !pathname.startsWith("/api/reminders") && request.method !== "GET") {
     return new Response(JSON.stringify({ error: { code: "METHOD_NOT_ALLOWED", message: "Method not allowed." } }), {
       status: 405, headers: { "Allow": "GET", "Content-Type": "application/json" },
     })
@@ -66,6 +69,13 @@ async function route(request: Request, env: Env): Promise<Response> {
     const user = await provisionUser(env, identity)
     return json({ data: { user, environment: env.ENVIRONMENT } })
   }
+  const user = await provisionUser(env, identity)
+  const todoResponse = await handleTodos(request, env, user, pathname)
+  if (todoResponse) return todoResponse
+  const noteResponse = await handleNotes(request, env, user, pathname)
+  if (noteResponse) return noteResponse
+  const reminderResponse = await handleReminders(request, env, user, pathname)
+  if (reminderResponse) return reminderResponse
   throw new HttpError(404, "NOT_FOUND", "Route not found.")
 }
 
@@ -83,7 +93,7 @@ export default {
       if (request.method === "OPTIONS") {
         if (!origin || origin !== env.APP_ORIGIN) throw new HttpError(403, "ORIGIN_NOT_ALLOWED", "Origin not allowed.")
         response = new Response(null, { status: 204, headers: {
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, X-Requested-With",
           "Access-Control-Max-Age": "600",
         } })
