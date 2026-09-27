@@ -62,6 +62,15 @@ body {
 
 button, a { -webkit-tap-highlight-color: transparent; }
 
+/* Mobile Safari zooms the page when a focused form control is below 16px. */
+@media (max-width: 767px) {
+  body input,
+  body textarea,
+  body select {
+    font-size: 1rem;
+  }
+}
+
 .dark {
   --sidebar: hsl(240 5.9% 10%);
   --sidebar-foreground: hsl(240 4.8% 95.9%);
